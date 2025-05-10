@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Quiz App</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <h2>Register</h2>
+    <form id="registerForm">
+        <label>Name: <input type="text" name="name" required></label><br>
+        <label>Email: <input type="email" name="email" required></label><br>
+        <label>Password: <input type="password" name="password" required></label><br>
+        <button type="submit">Register</button>
+    </form>
+    <p>Already have an account? <a href="login.html">Login</a></p>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+    $('#registerForm').on('submit', function(e) {
+        e.preventDefault();
+        const data = {
+            name: $('input[name=name]').val(),
+            email: $('input[name=email]').val(),
+            password: $('input[name=password]').val()
+        };
+        apiPost('api/auth/register.php', data)
+            .done(res => {
+                saveToken(res.token);
+                window.location.href = 'student/index.html';
+            })
+            .fail(err => alert(err.responseJSON?.error || 'Registration failed'));
+    });
+    </script>
+</body>
+</html>
