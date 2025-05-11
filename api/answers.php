@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     }
     // Fetch student answers joined with question info
     $stmt = $pdo->prepare(
-        'SELECT sa.question_id, q.type, q.correct_answer, sa.answer_text, sa.chosen_choice_id, sa.is_correct,
+        'SELECT sa.question_id, q.type, sa.answer_text, sa.chosen_choice_id, sa.is_correct,
                 c.id AS choice_id, c.content AS choice_content, c.is_correct AS choice_is_correct
          FROM student_answers sa
          JOIN questions q ON sa.question_id = q.id
@@ -111,8 +111,8 @@ foreach ($input['answers'] as $ans) {
     $answerText = $ans['answer_text'] ?? null;
     $choiceId = isset($ans['choice_id']) ? intval($ans['choice_id']) : null;
     $isCorrect = null;
-    // Fetch question type and correct answer
-    $stmtQ = $pdo->prepare('SELECT type, correct_answer FROM questions WHERE id = ?');
+    // Fetch question type
+    $stmtQ = $pdo->prepare('SELECT type FROM questions WHERE id = ?');
     $stmtQ->execute([$questionId]);
     $q = $stmtQ->fetch();
     if ($q) {
@@ -124,19 +124,14 @@ foreach ($input['answers'] as $ans) {
                 $isCorrect = $c ? (bool)$c['is_correct'] : false;
                 if ($isCorrect) $totalScore++;
             }
-        } else if ($q['type'] === 'fill_blank') {
-            // auto-grade fill in the blank by exact match (case-insensitive)
-            $correct = trim(strtolower($q['correct_answer'] ?? ''));
-            $given = trim(strtolower($answerText ?? ''));
-            $isCorrect = ($correct !== '' && $given === $correct);
-            if ($isCorrect) $totalScore++;
         }
     }
     $isCorrectInt = !empty($isCorrect) ? 1 : 0;
     $stmtIns = $pdo->prepare('INSERT INTO student_answers (attempt_id, question_id, answer_text, chosen_choice_id, is_correct) VALUES (?, ?, ?, ?, ?)');
     $stmtIns->execute([$attemptId, $questionId, $answerText, $choiceId, $isCorrectInt]);
 }
-$stmtUpd = $pdo->prepare('UPDATE student_quizzes SET score = ?, status = "completed", completed_at = NOW() WHERE id = ?');
+// Auto-grade: mark status as graded right after submission
+$stmtUpd = $pdo->prepare('UPDATE student_quizzes SET score = ?, status = "graded", completed_at = NOW() WHERE id = ?');
 $stmtUpd->execute([$totalScore, $attemptId]);
 
 echo json_encode(['success' => true, 'score' => $totalScore]);

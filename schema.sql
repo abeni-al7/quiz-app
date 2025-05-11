@@ -33,13 +33,12 @@ CREATE TABLE IF NOT EXISTS quizzes (
     FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
 );
 
--- Questions (supports multiple choice, true/false, fill-in-blank)
+-- Questions (supports multiple choice and true/false)
 CREATE TABLE IF NOT EXISTS questions (
     id INT AUTO_INCREMENT PRIMARY KEY,
     quiz_id INT NOT NULL,
-    type ENUM('multiple_choice', 'true_false', 'fill_blank') NOT NULL,
+    type ENUM('multiple_choice', 'true_false') NOT NULL,
     prompt TEXT NOT NULL,
-    correct_answer TEXT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE
 );

@@ -12,10 +12,15 @@
     <h1>Quiz Attempt</h1>
     <button id="logoutBtn">Logout</button>
   </div>
+  <div class="progress-bar"><div class="progress"></div></div>
   <div id="attemptInfo"></div>
   <form id="answerForm">
     <div id="questionsContainer"></div>
-    <button type="submit" id="submitBtn">Submit Answers</button>
+    <div class="nav-buttons">
+      <button type="button" id="prevBtn" style="display:none">Previous</button>
+      <button type="button" id="nextBtn" style="display:none">Next</button>
+      <button type="submit" id="submitBtn" style="display:none">Submit</button>
+    </div>
   </form>
   <div id="resultSection" style="display:none">
     <h2>Your Score: <span id="scoreDisplay"></span></h2>
