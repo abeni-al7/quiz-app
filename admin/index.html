@@ -26,7 +26,7 @@
             <input type="text" name="description" placeholder="Description">
             <button type="submit">Add Subject</button>
         </form>
-        <table id="subjectsTable"><thead><tr><th>ID</th><th>Title</th><th>Description</th></tr></thead><tbody></tbody></table>
+        <table id="subjectsTable"><thead><tr><th>ID</th><th>Title</th><th>Description</th><th>Actions</th></tr></thead><tbody></tbody></table>
     </div>
     <div id="quizzes" class="section" style="display:none">
         <h2>Quizzes</h2>
@@ -36,12 +36,12 @@
             <input type="text" name="description" placeholder="Description">
             <button type="submit">Add Quiz</button>
         </form>
-        <table id="quizzesTable"><thead><tr><th>ID</th><th>Title</th><th>Subject</th></tr></thead><tbody></tbody></table>
+        <table id="quizzesTable"><thead><tr><th>ID</th><th>Title</th><th>Subject</th><th>Actions</th></tr></thead><tbody></tbody></table>
     </div>
     <div id="questions" class="section" style="display:none">
         <h2>Questions</h2>
         <label>Select Quiz: <select id="quizSelect"></select></label>
-        <table id="questionsTable"><thead><tr><th>ID</th><th>Type</th><th>Prompt</th></tr></thead><tbody></tbody></table>
+        <table id="questionsTable"><thead><tr><th>ID</th><th>Type</th><th>Prompt</th><th>Actions</th></tr></thead><tbody></tbody></table>
         <h3>Add Question</h3>
         <form id="questionForm">
             <input type="hidden" name="quiz_id">

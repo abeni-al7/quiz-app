@@ -5,6 +5,7 @@ $(document).ready(function() {
     if (user.role !== 'student') return logout();
 
     $('#logoutBtn').click(logout);
+    $('#leaderboardBtn').click(function() { window.location.href = '/student/leaderboard.html'; });
 
     // Load subjects for start and filter
     apiGet('/api/subjects.php').done(list => {

@@ -32,3 +32,17 @@ function apiPost(url, data) {
 function apiPut(url, data) {
     return apiRequest('PUT', url, data);
 }
+
+// DELETE
+function apiDelete(url, data) {
+    return $.ajax({
+        url: url,
+        method: 'DELETE',
+        contentType: 'application/json',
+        data: data ? JSON.stringify(data) : null,
+        dataType: 'json',
+        headers: {
+            'Authorization': 'Bearer ' + getToken()
+        }
+    });
+}

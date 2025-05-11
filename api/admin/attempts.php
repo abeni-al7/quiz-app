@@ -9,5 +9,6 @@ $stmt = $pdo->query(
      FROM student_quizzes sq
      JOIN users u ON sq.student_id = u.id
      JOIN quizzes q ON sq.quiz_id = q.id'
-);\n$attempts = $stmt->fetchAll();
+);
+$attempts = $stmt->fetchAll();
 echo json_encode($attempts);

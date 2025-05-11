@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json');
-require_once __DIR__ . '/../../includes/db.php';
-require_once __DIR__ . '/../../includes/auth_middleware.php';
+require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/auth_middleware.php';
 
 $user = require_auth();
 
@@ -38,6 +38,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->execute([$title, $description, $subjectId, $admin['sub']]);
     $id = $pdo->lastInsertId();
     echo json_encode(['id' => $id, 'title' => $title, 'description' => $description, 'subject_id' => $subjectId]);
+    exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
+    $admin = require_admin();
+    $input = json_decode(file_get_contents('php://input'), true);
+    if (!isset($input['id'], $input['title'], $input['subject_id'])) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Missing id, title or subject_id']);
+        exit;
+    }
+    $id = intval($input['id']);
+    $title = trim($input['title']);
+    $description = trim($input['description'] ?? '');
+    $subjectId = intval($input['subject_id']);
+    $stmt = $pdo->prepare('UPDATE quizzes SET title = ?, description = ?, subject_id = ? WHERE id = ?');
+    $stmt->execute([$title, $description, $subjectId, $id]);
+    echo json_encode(['success' => true]);
+    exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
+    $admin = require_admin();
+    $input = json_decode(file_get_contents('php://input'), true);
+    if (!isset($input['id'])) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Missing id']);
+        exit;
+    }
+    $id = intval($input['id']);
+    $stmt = $pdo->prepare('DELETE FROM quizzes WHERE id = ?');
+    $stmt->execute([$id]);
+    echo json_encode(['success' => true]);
     exit;
 }
 

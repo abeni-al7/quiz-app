@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json');
-require_once __DIR__ . '/../../includes/db.php';
-require_once __DIR__ . '/../../includes/auth_middleware.php';
+require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/auth_middleware.php';
 
 $user = require_auth();
 $studentId = $user['sub'];
@@ -50,7 +50,7 @@ switch ($method) {
         echo json_encode($stmt->fetchAll());
         break;
     case 'POST':
-        // Start a new attempt
+        // Start a new attempt or return existing
         $input = json_decode(file_get_contents('php://input'), true);
         if (!isset($input['quiz_id'])) {
             http_response_code(400);
@@ -58,6 +58,22 @@ switch ($method) {
             exit;
         }
         $quizId = intval($input['quiz_id']);
+        // Check existing attempts
+        $stmt0 = $pdo->prepare('SELECT id, status FROM student_quizzes WHERE student_id = ? AND quiz_id = ? ORDER BY id DESC LIMIT 1');
+        $stmt0->execute([$studentId, $quizId]);
+        if ($existing = $stmt0->fetch()) {
+            if ($existing['status'] === 'in_progress' || $existing['status'] === 'completed') {
+                // return existing attempt
+                echo json_encode(['attempt_id' => intval($existing['id']), 'status' => $existing['status']]);
+                exit;
+            }
+            if ($existing['status'] === 'graded') {
+                http_response_code(403);
+                echo json_encode(['error' => 'Quiz already graded']);
+                exit;
+            }
+        }
+        // No existing or ungraded, create new
         $stmt = $pdo->prepare('INSERT INTO student_quizzes (student_id, quiz_id) VALUES (?, ?)');
         $stmt->execute([$studentId, $quizId]);
         $attemptId = $pdo->lastInsertId();

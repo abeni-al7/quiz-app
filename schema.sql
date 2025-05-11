@@ -25,9 +25,9 @@ CREATE TABLE IF NOT EXISTS subjects (
 CREATE TABLE IF NOT EXISTS quizzes (
     id INT AUTO_INCREMENT PRIMARY KEY,
     subject_id INT NOT NULL,
+    created_by INT NULL,
     title VARCHAR(150) NOT NULL,
     description TEXT,
-    created_by INT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (subject_id) REFERENCES subjects(id) ON DELETE CASCADE,
     FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
@@ -39,6 +39,7 @@ CREATE TABLE IF NOT EXISTS questions (
     quiz_id INT NOT NULL,
     type ENUM('multiple_choice', 'true_false', 'fill_blank') NOT NULL,
     prompt TEXT NOT NULL,
+    correct_answer TEXT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE
 );

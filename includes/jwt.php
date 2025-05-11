@@ -4,7 +4,7 @@ use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
 // Secret key for JWT signing (change this to a secure random key)
-const JWT_SECRET = 'change_this_to_secure_random_string';
+const JWT_SECRET = 'secure_random_string';
 const JWT_ALGO = 'HS256';
 
 // Generate JWT for a user
