@@ -1,17 +1,30 @@
 <?php
-require_once __DIR__ . '/jwt.php';
+// Session-based authentication middleware
+session_start();
 
-// Enforce valid JWT and return decoded payload
+// Enforce user is logged in
 function require_auth() {
-    return validate_jwt();
+    if (!isset($_SESSION['user'])) {
+        header('Location: /login.php');
+        exit;
+    }
+    return $_SESSION['user'];
 }
 
 // Enforce admin role
 function require_admin() {
-    $user = validate_jwt();
-    if ($user['role'] !== 'admin') {
-        http_response_code(403);
-        echo json_encode(['error' => 'Admin privileges required']);
+    if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
+        header('Location: /login.php');
+        exit;
+    }
+    return $_SESSION['user'];
+}
+
+// Enforce student role
+function require_student() {
+    $user = require_auth();
+    if ($user['role'] !== 'student') {
+        header('Location: /login.php');
         exit;
     }
     return $user;
